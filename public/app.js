@@ -80,6 +80,12 @@ function updateGuestFields() {
     }
   });
 
+  const transferInputs = form.querySelectorAll('input[name="transfer_aathal"]');
+  transferInputs.forEach((field) => {
+    field.required = attending && field.value === "Yes";
+    if (!attending) field.checked = false;
+  });
+
   setHidden(guestDietaryFieldset, !showGuestName);
   guestDietaryFieldset.querySelectorAll('input').forEach((field) => {
     field.disabled = !showGuestName;
