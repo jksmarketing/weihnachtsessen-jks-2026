@@ -61,15 +61,17 @@ export async function onRequestPost(context) {
       }, 503);
     }
 
-    const dietaryText = bringingGuest === "Yes"
-      ? `Teilnehmende Person: ${dietary.length ? dietary.join(", ") : "Keine Angabe"} | Begleitperson / Partner: ${guestDietary.length ? guestDietary.join(", ") : "Keine Angabe"}`
-      : (dietary.length ? dietary.join(", ") : "Keine Angabe");
+    // Keep each answer in its own monday.com column for filtering and reporting.
     const columnValues = {
       color_mm7q3wsc: { label: attendance },
-      text_mm7qpayv: dietaryText,
-      long_text_mm7q2xpt: { text: attendance === "Yes"
-        ? `Transfer Bahnhof Aathal → Juckerhof: ${transferAathal === "Yes" ? "Ja" : "Nein"}${notes ? `\nNotizen: ${notes}` : ""}`
-        : notes },
+      text_mm7qpayv: attendance === "Yes" ? (dietary.join(", ") || "Keine Angabe") : "",
+      text_mm8qnjnz: attendance === "Yes" && bringingGuest === "Yes"
+        ? (guestDietary.join(", ") || "Keine Angabe")
+        : "",
+      text_mm8qxrx1: attendance === "Yes"
+        ? (transferAathal === "Yes" ? "Ja" : "Nein")
+        : "",
+      long_text_mm7q2xpt: { text: notes },
       date_mm7qz3mx: { date: new Date().toISOString().slice(0, 10) },
       boolean_mm7qnsws: { checked: bringingGuest === "Yes" ? "true" : "false" },
       text_mm7qrs2s: bringingGuest === "Yes" ? guestName : ""
