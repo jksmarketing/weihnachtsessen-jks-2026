@@ -26,6 +26,7 @@ export async function onRequestPost(context) {
     const bringingGuest = clean(form.get("bringing_guest")) || "No";
     const guestName = clean(form.get("guest_name"));
     const notes = clean(form.get("notes"));
+    const transferAathal = clean(form.get("transfer_aathal"));
     const dietary = form.getAll("dietary").map(clean).filter(Boolean);
     const guestDietary = form.getAll("guest_dietary").map(clean).filter(Boolean);
 
@@ -49,6 +50,10 @@ export async function onRequestPost(context) {
       return json({ error: "Bitte gib den Namen deiner Begleitperson ein." }, 400);
     }
 
+    if (attendance === "Yes" && !["Yes", "No"].includes(transferAathal)) {
+      return json({ error: "Bitte gib an, ob du einen Transfer vom Bahnhof Aathal benötigst." }, 400);
+    }
+
     if (!env.MONDAY_API_TOKEN || !env.MONDAY_BOARD_ID) {
       console.log("Monday.com is not configured yet.");
       return json({
@@ -62,7 +67,9 @@ export async function onRequestPost(context) {
     const columnValues = {
       color_mm7q3wsc: { label: attendance },
       text_mm7qpayv: dietaryText,
-      long_text_mm7q2xpt: { text: notes },
+      long_text_mm7q2xpt: { text: attendance === "Yes"
+        ? `Transfer Bahnhof Aathal → Juckerhof: ${transferAathal === "Yes" ? "Ja" : "Nein"}${notes ? `\nNotizen: ${notes}` : ""}`
+        : notes },
       date_mm7qz3mx: { date: new Date().toISOString().slice(0, 10) },
       boolean_mm7qnsws: { checked: bringingGuest === "Yes" ? "true" : "false" },
       text_mm7qrs2s: bringingGuest === "Yes" ? guestName : ""
