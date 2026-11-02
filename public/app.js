@@ -5,6 +5,7 @@ const plusOneFieldset = document.getElementById("plus-one-fieldset");
 const guestNameWrapper = document.getElementById("guest-name-wrapper");
 const guestNameInput = form.querySelector('input[name="guest_name"]');
 const attendingDetails = document.getElementById("attending-details");
+const guestDietaryFieldset = document.getElementById("guest-dietary-fieldset");
 const confirmDialog = document.getElementById("confirm-dialog");
 const plusOneReminder = document.getElementById("plus-one-reminder");
 const guestEmailLink = document.getElementById("guest-email-link");
@@ -77,6 +78,12 @@ function updateGuestFields() {
       if (field.type === "checkbox") field.checked = false;
       if (field.tagName === "TEXTAREA") field.value = "";
     }
+  });
+
+  setHidden(guestDietaryFieldset, !showGuestName);
+  guestDietaryFieldset.querySelectorAll('input').forEach((field) => {
+    field.disabled = !showGuestName;
+    if (!showGuestName) field.checked = false;
   });
 
   setHidden(guestNameWrapper, !showGuestName);

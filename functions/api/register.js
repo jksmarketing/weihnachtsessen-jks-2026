@@ -27,6 +27,7 @@ export async function onRequestPost(context) {
     const guestName = clean(form.get("guest_name"));
     const notes = clean(form.get("notes"));
     const dietary = form.getAll("dietary").map(clean).filter(Boolean);
+    const guestDietary = form.getAll("guest_dietary").map(clean).filter(Boolean);
 
     if (!firstName || !lastName || !attendance) {
       return json({ error: "Bitte fülle alle Pflichtfelder aus." }, 400);
@@ -55,7 +56,9 @@ export async function onRequestPost(context) {
       }, 503);
     }
 
-    const dietaryText = dietary.length ? dietary.join(", ") : "Keine Angabe";
+    const dietaryText = bringingGuest === "Yes"
+      ? `Teilnehmende Person: ${dietary.length ? dietary.join(", ") : "Keine Angabe"} | Begleitperson / Partner: ${guestDietary.length ? guestDietary.join(", ") : "Keine Angabe"}`
+      : (dietary.length ? dietary.join(", ") : "Keine Angabe");
     const columnValues = {
       color_mm7q3wsc: { label: attendance },
       text_mm7qpayv: dietaryText,
